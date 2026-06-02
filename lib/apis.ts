@@ -416,4 +416,84 @@ export const api = {
       return handleResponse(response);
     },
   },
+
+  enrollment: {
+    getStats: async (options?: { courseId?: string }) => {
+      const query = new URLSearchParams();
+      if (options?.courseId) query.set("courseId", options.courseId);
+      const response = await fetch(
+        `${API_URL}/enrollments/stats${query.toString() ? `?${query.toString()}` : ""}`,
+        { headers: headers() },
+      );
+      return handleResponse(response);
+    },
+
+    list: async (options?: {
+      page?: number;
+      limit?: number;
+      search?: string;
+      courseId?: string;
+      status?: string;
+      from?: string;
+      to?: string;
+      sortBy?: string;
+      sortOrder?: "asc" | "desc";
+    }) => {
+      const query = new URLSearchParams();
+      if (options?.page) query.set("page", String(options.page));
+      if (options?.limit) query.set("limit", String(options.limit));
+      if (options?.search) query.set("search", options.search);
+      if (options?.courseId) query.set("courseId", options.courseId);
+      if (options?.status) query.set("status", options.status);
+      if (options?.from) query.set("from", options.from);
+      if (options?.to) query.set("to", options.to);
+      if (options?.sortBy) query.set("sortBy", options.sortBy);
+      if (options?.sortOrder) query.set("sortOrder", options.sortOrder);
+
+      const response = await fetch(
+        `${API_URL}/enrollments${query.toString() ? `?${query.toString()}` : ""}`,
+        { headers: headers() },
+      );
+      return handleResponse(response);
+    },
+
+    getById: async (enrollmentId: string) => {
+      const response = await fetch(`${API_URL}/enrollments/${enrollmentId}`, {
+        headers: headers(),
+      });
+      return handleResponse(response);
+    },
+
+    manualEnroll: async (payload: {
+      courseId: string;
+      studentEmail: string;
+      status?: string;
+      amountPaid?: number;
+      currency?: string;
+    }) => {
+      const response = await fetch(`${API_URL}/enrollments/manual`, {
+        method: "POST",
+        headers: headers(),
+        body: JSON.stringify(payload),
+      });
+      return handleResponse(response);
+    },
+
+    bulkEnroll: async (payload: { courseId: string; studentEmails: string; status?: string }) => {
+      const response = await fetch(`${API_URL}/enrollments/bulk`, {
+        method: "POST",
+        headers: headers(),
+        body: JSON.stringify(payload),
+      });
+      return handleResponse(response);
+    },
+
+    remove: async (enrollmentId: string) => {
+      const response = await fetch(`${API_URL}/enrollments/${enrollmentId}`, {
+        method: "DELETE",
+        headers: headers(),
+      });
+      return handleResponse(response);
+    },
+  },
 };

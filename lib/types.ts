@@ -56,10 +56,17 @@ export type Enrollment = {
   progressPercent?: number;
   lastActivityAt?: string | null;
   completedAt?: string | null;
-  status?: "ACTIVE" | "COMPLETED" | "CANCELLED";
+  status?: "ACTIVE" | "COMPLETED" | "CANCELLED" | "DROPPED" | "REFUNDED";
   student: { name: string; email: string };
   // optional: payment info, status, etc. kept open for backend extensions
   [key: string]: unknown;
+};
+
+export type EnrollmentStats = {
+  totalEnrollments: number;
+  activeStudents: number;
+  completed: number;
+  totalRevenue: number;
 };
 
 export type Course = {
