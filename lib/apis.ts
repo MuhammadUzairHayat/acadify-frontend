@@ -4,6 +4,7 @@ import {
   UpdateAcademyInput,
   UpdateCourseInput,
   RegisterInput,
+  Announcement,
   CreateSectionDto,
   UpdateSectionDto,
   CreateLectureDto,
@@ -151,10 +152,94 @@ export const api = {
       return handleResponse(response);
     },
 
-    getStudents: async (id: string) => {
+    getStudents: async (
+      id: string,
+      options?: {
+        search?: string;
+        sortBy?: "name" | "enrollmentDate" | "completionPercent";
+        sortOrder?: "asc" | "desc";
+      },
+    ) => {
+      const query = new URLSearchParams();
+      if (options?.search) query.set("search", options.search);
+      if (options?.sortBy) query.set("sortBy", options.sortBy);
+      if (options?.sortOrder) query.set("sortOrder", options.sortOrder);
+      const queryString = query.toString();
+      const response = await fetch(
+        `${API_URL}/courses/${id}/students${queryString ? `?${queryString}` : ""}`,
+        {
+          headers: headers(),
+        },
+      );
+      return handleResponse(response);
+    },
+
+    enrollStudent: async (id: string, email: string) => {
       const response = await fetch(`${API_URL}/courses/${id}/students`, {
+        method: "POST",
         headers: headers(),
+        body: JSON.stringify({ email }),
       });
+      return handleResponse(response);
+    },
+
+    removeStudent: async (id: string, enrollmentId: string) => {
+      const response = await fetch(
+        `${API_URL}/courses/${id}/students/${enrollmentId}`,
+        {
+          method: "DELETE",
+          headers: headers(),
+        },
+      );
+      return handleResponse(response);
+    },
+
+    getAnnouncements: async (id: string, search?: string) => {
+      const query = new URLSearchParams();
+      if (search?.trim()) query.set("search", search.trim());
+      const response = await fetch(
+        `${API_URL}/courses/${id}/announcements${query.toString() ? `?${query.toString()}` : ""}`,
+        { headers: headers() },
+      );
+      return handleResponse(response) as Promise<Announcement[]>;
+    },
+
+    createAnnouncement: async (
+      id: string,
+      payload: { title: string; message: string; isImportant?: boolean },
+    ) => {
+      const response = await fetch(`${API_URL}/courses/${id}/announcements`, {
+        method: "POST",
+        headers: headers(),
+        body: JSON.stringify(payload),
+      });
+      return handleResponse(response) as Promise<Announcement>;
+    },
+
+    updateAnnouncement: async (
+      id: string,
+      announcementId: string,
+      payload: { title?: string; message?: string; isImportant?: boolean },
+    ) => {
+      const response = await fetch(
+        `${API_URL}/courses/${id}/announcements/${announcementId}`,
+        {
+          method: "PUT",
+          headers: headers(),
+          body: JSON.stringify(payload),
+        },
+      );
+      return handleResponse(response) as Promise<Announcement>;
+    },
+
+    deleteAnnouncement: async (id: string, announcementId: string) => {
+      const response = await fetch(
+        `${API_URL}/courses/${id}/announcements/${announcementId}`,
+        {
+          method: "DELETE",
+          headers: headers(),
+        },
+      );
       return handleResponse(response);
     },
 

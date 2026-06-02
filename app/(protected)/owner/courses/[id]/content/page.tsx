@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/Button";
 import { Loader } from "@/components/ui/Loader";
 import { api } from "@/lib/apis";
 import Modal from "@/components/ui/Modal";
+import CourseTabs from "@/components/owner/CourseTabs";
 import type { Section as SectionBase, Lecture, Course } from "@/lib/types";
 
 type Section = Omit<SectionBase, "lectures"> & { lectures: Lecture[] };
@@ -409,6 +410,9 @@ export default function CourseContentPage() {
               </svg>
               Add Section
             </Button>
+          </div>
+          <div className="mt-4">
+            <CourseTabs courseId={courseId} />
           </div>
         </div>
       </header>

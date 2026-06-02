@@ -17,9 +17,24 @@ export type CreateCourseInput = {
   level: string;
   thumbnail?: string;
   isPublished?: boolean;
+  status?: "DRAFT" | "PUBLISHED" | "ARCHIVED";
+  currency?: string;
+  tags?: string[];
+  whatYouWillLearn?: string;
+  targetAudience?: string;
+  requirements?: string;
 };
 
 export type UpdateCourseInput = Partial<CreateCourseInput>;
+
+export type Announcement = {
+  id: string;
+  title: string;
+  message: string;
+  isImportant: boolean;
+  createdAt: string;
+  updatedAt: string;
+};
 
 export type RegisterInput = {
   name: string;
@@ -38,6 +53,10 @@ export type User = {
 export type Enrollment = {
   id: string;
   enrolledAt: string;
+  progressPercent?: number;
+  lastActivityAt?: string | null;
+  completedAt?: string | null;
+  status?: "ACTIVE" | "COMPLETED" | "CANCELLED";
   student: { name: string; email: string };
   // optional: payment info, status, etc. kept open for backend extensions
   [key: string]: unknown;
@@ -51,7 +70,13 @@ export type Course = {
   category?: string;
   level?: string;
   isPublished?: boolean;
+  status?: "DRAFT" | "PUBLISHED" | "ARCHIVED";
   thumbnail?: string | null;
+  currency?: string;
+  tags?: string[];
+  whatYouWillLearn?: string | null;
+  targetAudience?: string | null;
+  requirements?: string | null;
   _count?: {
     enrollments: number;
   };

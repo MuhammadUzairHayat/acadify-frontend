@@ -73,8 +73,8 @@ export default function OwnerSidebar() {
       ),
     },
     {
-      name: "Students",
-      href: "/owner/students",
+      name: "Enrollments",
+      href: "/owner/enrollments",
       icon: (
         <svg
           className="h-5 w-5"

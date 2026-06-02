@@ -33,8 +33,13 @@ export default function CoursesPage() {
     setLoading(true);
 
     try {
-      const data = await api.course.getMy();
-      setCourses(Array.isArray(data) ? data : []);
+      const response = await api.course.getMy();
+      const resolvedCourses = Array.isArray(response)
+        ? response
+        : Array.isArray(response?.data)
+          ? response.data
+          : [];
+      setCourses(resolvedCourses);
     } catch (error) {
       console.error('Error fetching courses:', error);
     } finally {
@@ -160,9 +165,9 @@ export default function CoursesPage() {
                     </div>
                   </div>
                   <div className="flex items-center gap-2 ml-4">
-                    <Link href={`/owner/courses/${course.id}/edit`}>
+                    <Link href={`/owner/courses/${course.id}/settings`}>
                       <Button variant="ghost" size="sm">
-                        Edit
+                        Settings
                       </Button>
                     </Link>
                     <Link href={`/owner/courses/${course.id}/students`}>
