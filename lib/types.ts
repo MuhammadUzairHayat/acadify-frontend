@@ -74,3 +74,107 @@ export interface Academy {
   isApproved: boolean;
   createdAt: string;
 }
+
+// ============ SECTION TYPES ============
+
+export interface Section {
+  id: string;
+  title: string;
+  description: string | null;
+  order: number;
+  courseId: string;
+  createdAt: string;
+  updatedAt: string;
+  lectures?: Lecture[];
+}
+
+export interface CreateSectionDto {
+  title: string;
+  description?: string;
+  order: number;
+}
+
+export interface UpdateSectionDto {
+  title?: string;
+  description?: string;
+  order?: number;
+}
+
+export interface SectionReorderDto {
+  sections: {
+    id: string;
+    order: number;
+  }[];
+}
+
+// ============ LECTURE TYPES ============
+
+export interface Lecture {
+  id: string;
+  title: string;
+  description: string | null;
+  videoUrl: string | null;
+  pdfUrl: string | null;
+  resourceUrl: string | null;
+  duration: number | null;
+  isFree: boolean;
+  order: number;
+  sectionId: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateLectureDto {
+  title: string;
+  description?: string;
+  videoUrl?: string;
+  pdfUrl?: string;
+  resourceUrl?: string;
+  duration?: number;
+  isFree?: boolean;
+  order: number;
+}
+
+export interface UpdateLectureDto {
+  title?: string;
+  description?: string;
+  videoUrl?: string;
+  pdfUrl?: string;
+  resourceUrl?: string;
+  duration?: number;
+  isFree?: boolean;
+  order?: number;
+}
+
+export interface LectureReorderDto {
+  lectures: {
+    id: string;
+    order: number;
+  }[];
+}
+
+// ============ COURSE CONTENT TYPES ============
+
+export interface CourseContent {
+  course: {
+    id: string;
+    title: string;
+    description: string;
+    thumbnail: string | null;
+    price: number;
+    category: string;
+    level: string;
+    isPublished: boolean;
+    academy: {
+      id: string;
+      name: string;
+      slug: string;
+    };
+    instructor: {
+      id: string;
+      name: string;
+    };
+  };
+  sections: Section[];
+  isEnrolled: boolean;
+}

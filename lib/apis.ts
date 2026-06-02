@@ -1,4 +1,14 @@
-import { CreateAcademyInput, CreateCourseInput, UpdateAcademyInput, UpdateCourseInput, RegisterInput } from "./types";
+import {
+  CreateAcademyInput,
+  CreateCourseInput,
+  UpdateAcademyInput,
+  UpdateCourseInput,
+  RegisterInput,
+  CreateSectionDto,
+  UpdateSectionDto,
+  CreateLectureDto,
+  UpdateLectureDto,
+} from "./types";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 
@@ -187,6 +197,138 @@ export const api = {
     logout: () => {
       localStorage.removeItem("token");
       localStorage.removeItem("user");
+    },
+  },
+  // Add to existing api object
+
+  section: {
+    create: async (courseId: string, data: CreateSectionDto) => {
+      const response = await fetch(`${API_URL}/courses/${courseId}/sections`, {
+        method: "POST",
+        headers: headers(),
+        body: JSON.stringify(data),
+      });
+      return handleResponse(response);
+    },
+
+    getByCourse: async (courseId: string) => {
+      const response = await fetch(`${API_URL}/courses/${courseId}/sections`);
+      return handleResponse(response);
+    },
+
+    getById: async (courseId: string, sectionId: string) => {
+      const response = await fetch(
+        `${API_URL}/courses/${courseId}/sections/${sectionId}`,
+      );
+      return handleResponse(response);
+    },
+
+    update: async (courseId: string, sectionId: string, data: UpdateSectionDto) => {
+      const response = await fetch(
+        `${API_URL}/courses/${courseId}/sections/${sectionId}`,
+        {
+          method: "PUT",
+          headers: headers(),
+          body: JSON.stringify(data),
+        },
+      );
+      return handleResponse(response);
+    },
+
+    delete: async (courseId: string, sectionId: string) => {
+      const response = await fetch(
+        `${API_URL}/courses/${courseId}/sections/${sectionId}`,
+        {
+          method: "DELETE",
+          headers: headers(),
+        },
+      );
+      return handleResponse(response);
+    },
+
+    reorder: async (
+      courseId: string,
+      sections: { id: string; order: number }[],
+    ) => {
+      const response = await fetch(
+        `${API_URL}/courses/${courseId}/sections/reorder`,
+        {
+          method: "POST",
+          headers: headers(),
+          body: JSON.stringify({ sections }),
+        },
+      );
+      return handleResponse(response);
+    },
+  },
+
+  lecture: {
+    create: async (courseId: string, sectionId: string, data: CreateLectureDto) => {
+      const response = await fetch(
+        `${API_URL}/courses/${courseId}/sections/${sectionId}/lectures`,
+        {
+          method: "POST",
+          headers: headers(),
+          body: JSON.stringify(data),
+        },
+      );
+      return handleResponse(response);
+    },
+
+    getById: async (lectureId: string) => {
+      const response = await fetch(`${API_URL}/courses/lectures/${lectureId}`);
+      return handleResponse(response);
+    },
+
+    update: async (
+      courseId: string,
+      sectionId: string,
+      lectureId: string,
+      data: UpdateLectureDto,
+    ) => {
+      const response = await fetch(
+        `${API_URL}/courses/${courseId}/sections/${sectionId}/lectures/${lectureId}`,
+        {
+          method: "PUT",
+          headers: headers(),
+          body: JSON.stringify(data),
+        },
+      );
+      return handleResponse(response);
+    },
+
+    delete: async (courseId: string, sectionId: string, lectureId: string) => {
+      const response = await fetch(
+        `${API_URL}/courses/${courseId}/sections/${sectionId}/lectures/${lectureId}`,
+        {
+          method: "DELETE",
+          headers: headers(),
+        },
+      );
+      return handleResponse(response);
+    },
+
+    reorder: async (
+      courseId: string,
+      sectionId: string,
+      lectures: { id: string; order: number }[],
+    ) => {
+      const response = await fetch(
+        `${API_URL}/courses/${courseId}/sections/${sectionId}/lectures/reorder`,
+        {
+          method: "POST",
+          headers: headers(),
+          body: JSON.stringify({ lectures }),
+        },
+      );
+      return handleResponse(response);
+    },
+
+    getCourseContent: async (courseId: string) => {
+      const response = await fetch(`${API_URL}/courses/${courseId}/content`, {
+        headers: headers(),
+      });
+      return handleResponse(response);
     },
   },
 };
