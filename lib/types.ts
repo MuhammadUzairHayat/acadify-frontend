@@ -1,3 +1,5 @@
+export type UserRole = "STUDENT" | "OWNER" | "ADMIN";
+
 export type CreateAcademyInput = {
   name: string;
   description: string;
@@ -107,6 +109,169 @@ export interface Academy {
   createdAt: string;
 }
 
+export type AcademyListItem = {
+  id: string;
+  name: string;
+  slug: string;
+  description: string;
+  logo: string | null;
+  banner: string | null;
+  city: string;
+  isVerified: boolean;
+  createdAt: string;
+  courseCount: number;
+  studentCount: number;
+  reviewCount: number;
+  averageRating: number;
+  categories: string[];
+  specialties: string[];
+  priceRange: { min: number; max: number; avg: number };
+  isNew?: boolean;
+};
+
+export type AcademyReview = {
+  id: string;
+  rating: number;
+  comment?: string | null;
+  createdAt: string;
+  studentName: string;
+  courseTitle: string;
+};
+
+export type AcademyDetail = AcademyListItem & {
+  address?: string | null;
+  ownerName?: string;
+  popularCourses: {
+    id: string;
+    title: string;
+    description?: string;
+    category: string;
+    price: number;
+    thumbnail: string | null;
+    level?: string;
+    studentCount: number;
+    averageRating: number;
+    reviewCount: number;
+  }[];
+  ratingDistribution: Record<string, number>;
+  recentReviews: AcademyReview[];
+};
+
+export type CourseListItem = {
+  id: string;
+  slug: string;
+  title: string;
+  shortDescription?: string | null;
+  description?: string;
+  thumbnail?: string | null;
+  previewVideoUrl?: string | null;
+  price: number;
+  currency: string;
+  isFree: boolean;
+  category: string;
+  subcategory?: string | null;
+  level: string;
+  totalLectures: number;
+  totalDuration: number;
+  totalStudents: number;
+  totalReviews: number;
+  averageRating: number;
+  isFeatured: boolean;
+  isBestseller: boolean;
+  isNew?: boolean;
+  publishedAt?: string | null;
+  badge?: "trending" | "popular" | "featured" | "new" | "free";
+  academy: {
+    id: string;
+    name: string;
+    slug: string;
+    logo?: string | null;
+  };
+  instructor: {
+    id: string;
+    name: string;
+    profileImage?: string | null;
+  };
+  tags: string[];
+};
+
+export type CourseReviewItem = {
+  id: string;
+  rating: number;
+  comment?: string | null;
+  createdAt: string;
+  studentName: string;
+  studentAvatar?: string | null;
+};
+
+export type CourseDetail = CourseListItem & {
+  whatYouWillLearn?: string[] | null;
+  requirements?: string[] | null;
+  targetAudience?: string[] | null;
+  totalSections: number;
+  curriculum: {
+    id: string;
+    title: string;
+    description?: string | null;
+    order: number;
+    lectureCount: number;
+    durationMinutes: number;
+    lectures: {
+      id: string;
+      title: string;
+      duration?: number | null;
+      isFree: boolean;
+      order: number;
+      isLocked: boolean;
+    }[];
+  }[];
+  ratingDistribution: Record<string, number>;
+  recentReviews: CourseReviewItem[];
+  isEnrolled: boolean;
+  isWishlisted: boolean;
+  instructor: CourseListItem["instructor"] & {
+    bio?: string | null;
+    otherCourses: {
+      id: string;
+      slug: string;
+      title: string;
+      averageRating: number;
+      price: number;
+      thumbnail?: string | null;
+    }[];
+  };
+};
+
+export type CourseEnrollResult = {
+  enrolled: boolean;
+  alreadyEnrolled?: boolean;
+  requiresPayment?: boolean;
+  courseId: string;
+  slug: string;
+  price?: number;
+  currency?: string;
+  playUrl?: string;
+};
+
+export type PaymentIntentSession = {
+  paymentId: string;
+  clientSecret: string;
+  publishableKey: string;
+  stripeAccountId: string;
+  amount: number;
+  currency: string;
+  courseTitle: string;
+};
+
+export type PaymentStatusResult = {
+  paymentId: string;
+  status: "PENDING" | "COMPLETED" | "FAILED" | "REFUNDED" | "PARTIALLY_REFUNDED" | "DISPUTED" | "EXPIRED";
+  enrolled: boolean;
+  playUrl: string | null;
+  courseSlug: string;
+  courseTitle: string;
+};
+
 // ============ SECTION TYPES ============
 
 export interface Section {
@@ -210,3 +375,86 @@ export interface CourseContent {
   sections: Section[];
   isEnrolled: boolean;
 }
+
+export type StudentCourseEnrollment = {
+  id: string;
+  progressPercent: number;
+  totalWatchTime: number;
+  status: "ACTIVE" | "COMPLETED" | "CANCELLED" | "DROPPED" | "REFUNDED";
+  lastAccessedAt?: string | null;
+  completedAt?: string | null;
+  course: {
+    id: string;
+    title: string;
+    thumbnail?: string | null;
+    instructor?: {
+      id: string;
+      name: string;
+    } | null;
+  };
+};
+
+export type StudentDashboardData = {
+  enrolledCount: number;
+  inProgressCount: number;
+  completedCount: number;
+  totalHours: number;
+  continueLearning: StudentCourseEnrollment[];
+  recentCompleted: StudentCourseEnrollment[];
+};
+
+export type StudentPlayData = {
+  course: {
+    id: string;
+    title: string;
+    description?: string | null;
+    thumbnail?: string | null;
+  };
+  sections: Section[];
+  currentProgress: {
+    overallProgress: number;
+    totalWatchTime: number;
+    lastLectureId?: string | null;
+  };
+  watchHistory: {
+    lectureId: string;
+    completed: boolean;
+    watchTime: number;
+    lastPosition: number;
+  }[];
+};
+
+export type StudentProfile = {
+  name: string;
+  email: string;
+  bio?: string | null;
+  avatarUrl?: string | null;
+  skills: string[];
+  preferences: Record<string, unknown>;
+};
+
+export type StudentCertificate = {
+  id: string;
+  certificateId: string;
+  certificateUrl: string;
+  issuedAt: string;
+  downloadedAt?: string | null;
+  completionDate?: string | null;
+  studentName?: string;
+  courseTitle?: string;
+  course: {
+    id: string;
+    title: string;
+    thumbnail?: string | null;
+  };
+};
+
+export type StudentNotification = {
+  id: string;
+  type: string;
+  title: string;
+  message: string;
+  link?: string | null;
+  isRead: boolean;
+  createdAt: string;
+};

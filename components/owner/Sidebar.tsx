@@ -2,188 +2,88 @@
 
 import { api } from "@/lib/apis";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
+import { useBillingData } from "@/hooks/useOwner";
+import { AcadifyBranding } from "@/components/owner/AcadifyBranding";
+import type { PlanFeatureFlags } from "@/lib/plan-features";
 
-interface NavItem {
-  name: string;
-  href: string;
-  icon: React.ReactNode;
-}
+const NAV_ITEMS = [
+  { name: "Dashboard", href: "/owner/dashboard" },
+  { name: "Academy", href: "/owner/academy" },
+  { name: "Courses", href: "/owner/courses" },
+  { name: "Enrollments", href: "/owner/enrollments" },
+  { name: "Billing", href: "/owner/billing" },
+  { name: "Analytics", href: "/owner/analytics" },
+];
 
 export default function OwnerSidebar() {
   const pathname = usePathname();
-  const router = useRouter();
-
-  const navItems: NavItem[] = [
-    {
-      name: "Dashboard",
-      href: "/owner/dashboard",
-      icon: (
-        <svg
-          className="h-5 w-5"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-          />
-        </svg>
-      ),
-    },
-    {
-      name: "My Academy",
-      href: "/owner/academy",
-      icon: (
-        <svg
-          className="h-5 w-5"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
-          />
-        </svg>
-      ),
-    },
-    {
-      name: "Courses",
-      href: "/owner/courses",
-      icon: (
-        <svg
-          className="h-5 w-5"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
-          />
-        </svg>
-      ),
-    },
-    {
-      name: "Enrollments",
-      href: "/owner/enrollments",
-      icon: (
-        <svg
-          className="h-5 w-5"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
-          />
-        </svg>
-      ),
-    },
-  ];
+  const { billing } = useBillingData();
+  const whiteLabel =
+    (
+      billing as {
+        entitlements?: PlanFeatureFlags;
+        usage?: { limits?: PlanFeatureFlags };
+      } | null
+    )?.entitlements?.whiteLabel ??
+    (
+      billing as { usage?: { limits?: PlanFeatureFlags } } | null
+    )?.usage?.limits?.whiteLabel ??
+    false;
 
   const handleLogout = () => {
-    api.auth.logout();
-    router.push("/login");
+    void api.auth.logout("/login");
   };
 
   const isActive = (href: string) => {
-    if (href === "/owner/dashboard" && pathname === "/owner/dashboard")
-      return true;
-    if (href !== "/owner/dashboard" && pathname.startsWith(href)) return true;
-    return false;
+    if (href === "/owner/dashboard") return pathname === "/owner/dashboard";
+    return pathname.startsWith(href);
   };
 
   return (
-    <aside className="fixed left-0 top-0 h-full w-64 bg-surface border-r border-border flex flex-col">
-      {/* Logo */}
-      <div className="p-6 border-b border-border">
-        <Link href="/owner/dashboard" className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-accent rounded-lg flex items-center justify-center">
+    <aside className="fixed left-0 top-0 h-full w-64 bg-surface/95 backdrop-blur-xl border-r border-border-subtle flex flex-col z-40">
+      <div className="p-5 border-b border-border-subtle">
+        <Link href="/owner/dashboard" className="flex items-center gap-2.5">
+          <div className="w-8 h-8 bg-accent rounded-xl flex items-center justify-center">
             <span className="text-text-inverse font-bold text-lg">A</span>
           </div>
-          <span className="text-xl font-bold text-text-primary">Acadify</span>
+          <span className="text-lg font-bold text-text-primary tracking-tight">Acadify</span>
         </Link>
-        <p className="text-xs text-text-tertiary mt-2">Owner Portal</p>
+        <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-text-tertiary mt-3">
+          Owner
+        </p>
       </div>
 
-      {/* Navigation */}
-      <nav className="flex-1 p-4 space-y-1">
-        {navItems.map((item) => (
+      <nav className="flex-1 p-3 space-y-0.5">
+        {NAV_ITEMS.map((item) => (
           <Link
             key={item.href}
             href={item.href}
-            className={`
-              flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all duration-200
-              ${
-                isActive(item.href)
-                  ? "bg-accent/10 text-accent"
-                  : "text-text-secondary hover:bg-background-hover hover:text-text-primary"
-              }
-            `}
+            className={`flex items-center px-3.5 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+              isActive(item.href)
+                ? "bg-white/10 text-text-primary"
+                : "text-text-secondary hover:bg-background-hover hover:text-text-primary"
+            }`}
           >
-            {item.icon}
-            <span className="font-medium">{item.name}</span>
+            {item.name}
           </Link>
         ))}
       </nav>
 
-      {/* Footer */}
-      <div className="p-4 border-t border-border space-y-2">
+      <div className="p-3 border-t border-border-subtle space-y-2">
+        <AcadifyBranding whiteLabel={whiteLabel} className="px-1.5" />
         <Link
-          href="/settings"
-          className="flex items-center gap-3 px-4 py-2.5 rounded-lg text-text-secondary hover:bg-background-hover hover:text-text-primary transition"
+          href="/"
+          className="block text-center text-xs text-text-tertiary hover:text-text-secondary py-1 transition-colors"
         >
-          <svg
-            className="h-5 w-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-            />
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-            />
-          </svg>
-          <span>Settings</span>
+          Public site
         </Link>
         <button
+          type="button"
           onClick={handleLogout}
-          className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-red-400 hover:bg-red-500/10 transition"
+          className="w-full px-3.5 py-2.5 rounded-xl text-sm font-medium text-red-400 hover:bg-red-500/10 transition-colors"
         >
-          <svg
-            className="h-5 w-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-            />
-          </svg>
-          <span>Logout</span>
+          Logout
         </button>
       </div>
     </aside>

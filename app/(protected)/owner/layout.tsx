@@ -8,7 +8,7 @@ export default function OwnerLayout({
   return (
     <div className="min-h-screen bg-background-primary flex">
       <OwnerSidebar />
-      <div className="flex-1 ml-64">{children}</div>
+      <main className="flex-1 ml-64 min-h-screen">{children}</main>
     </div>
   );
 }

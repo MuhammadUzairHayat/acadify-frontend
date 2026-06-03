@@ -7,14 +7,14 @@ const tabs = [
   { key: "content", label: "Content", href: "content" },
   { key: "settings", label: "Settings", href: "settings" },
   { key: "students", label: "Students", href: "students" },
-  { key: "announcements", label: "Announcements", href: "announcements" },
+  { key: "announcements", label: "Alerts", href: "announcements" },
 ];
 
 export default function CourseTabs({ courseId }: { courseId: string }) {
   const pathname = usePathname();
 
   return (
-    <nav className="flex gap-6 border-b border-border overflow-x-auto">
+    <nav className="flex gap-1 border-t border-border-subtle overflow-x-auto -mx-1">
       {tabs.map((tab) => {
         const href = `/owner/courses/${courseId}/${tab.href}`;
         const isActive = pathname === href;
@@ -22,10 +22,10 @@ export default function CourseTabs({ courseId }: { courseId: string }) {
           <Link
             key={tab.key}
             href={href}
-            className={`py-3 text-sm font-medium border-b-2 transition whitespace-nowrap ${
+            className={`px-4 py-3 text-sm font-medium transition-colors whitespace-nowrap border-b-2 -mb-px ${
               isActive
-                ? "text-accent border-accent"
-                : "text-text-secondary border-transparent hover:text-text-primary"
+                ? "text-text-primary border-white/80"
+                : "text-text-tertiary border-transparent hover:text-text-secondary"
             }`}
           >
             {tab.label}
